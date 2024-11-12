@@ -8,11 +8,12 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const walletAddress = formData.get("walletAddress")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
-  if (!email || !password) {
-    return { error: "Email and password are required" };
+  if (!email || !password || !walletAddress) {
+    return { error: "Email, password, and wallet address are required" };
   }
 
   const { error } = await supabase.auth.signUp({
@@ -38,6 +39,7 @@ export const signUpAction = async (formData: FormData) => {
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const walletAddress = formData.get("walletAddress")?.toString();
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -54,12 +56,13 @@ export const signInAction = async (formData: FormData) => {
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
+  const walletAddress = formData.get("walletAddress")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
   const callbackUrl = formData.get("callbackUrl")?.toString();
 
-  if (!email) {
-    return encodedRedirect("error", "/forgot-password", "Email is required");
+  if (!email || !walletAddress) {
+    return encodedRedirect("error", "/forgot-password", "Email and wallet address are required");
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
