@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { initiateLandTransaction } from './api/ownership';
 
 const TransactionsPage = () => {
   const [buyerInfo, setBuyerInfo] = useState({ name: '', walletAddress: '' });
@@ -12,9 +13,17 @@ const TransactionsPage = () => {
   };
 
   const handleTransaction = async () => {
-    // Implement the logic to initiate the land transaction
-    // Update the transactionConfirmed state variable
-    setTransactionConfirmed(true);
+    const result = await initiateLandTransaction({
+      geohash,
+      buyerAddress: buyerInfo.walletAddress,
+      sellerAddress: sellerInfo.walletAddress,
+      price: 0 // Add logic to get the price if needed
+    });
+    if (result.success) {
+      setTransactionConfirmed(true);
+    } else {
+      alert("Transaction failed: " + result.error);
+    }
   };
 
   return (
